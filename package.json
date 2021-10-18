@@ -1,7 +1,7 @@
 {
-  "name": "@apostrophecms/module-template",
-  "version": "1.0.0",
-  "description": "A template for creating an ApostropheCMS 3 module.",
+  "name": "@apostrophecms/pieces-exporter",
+  "version": "1.0.0-beta",
+  "description": "An Apostrophe 3 module to support exporting piece data",
   "main": "index.js",
   "scripts": {
     "lint": "npm run eslint",
@@ -10,9 +10,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/apostrophecms/module-template.git"
+    "url": "git+https://github.com/apostrophecms/pieces-exporter.git"
   },
-  "homepage": "https://github.com/apostrophecms/module-template#readme",
+  "homepage": "https://github.com/apostrophecms/pieces-exporter#readme",
   "author": "Apostrophe Technologies",
   "license": "MIT",
   "devDependencies": {

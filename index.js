@@ -1,17 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-
 module.exports = {
-  bundle: {
-    directory: 'modules',
-    modules: getBundleModuleNames()
+  improve: '@apostrophecms/piece-type',
+  init (self) {
+    // Adding this simply to show it can be installed.
+    console.info('👩‍🏭', self.__meta.name);
   }
 };
-
-function getBundleModuleNames() {
-  const source = path.join(__dirname, './modules/@apostrophecms');
-  return fs
-    .readdirSync(source, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => `@apostrophecms/${dirent.name}`);
-}
