@@ -57,42 +57,48 @@ describe('Pieces Exporter', function () {
     assert(productModule.options.exporterActive === true);
   });
 
-  // it('insert many test products', function () {
-  //   const total = 50;
-  //   let i = 1;
-  //   return insertNext();
-  //   function insertNext () {
-  //     const product = _.assign(apos.modules.products.newInstance(), {
-  //       title: 'Cheese #' + padInteger(i, 5),
-  //       slug: 'cheese-' + padInteger(i, 5),
-  //       richText: {
-  //         type: 'area',
-  //         items: [
-  //           {
-  //             type: 'apostrophe-rich-text',
-  //             content: '<h4>This stays rich text.</h4>'
-  //           }
-  //         ]
-  //       },
-  //       plaintext: {
-  //         type: 'area',
-  //         items: [
-  //           {
-  //             type: 'apostrophe-rich-text',
-  //             content: '<h4>This becomes plaintext.</h4>'
-  //           }
-  //         ]
-  //       }
-  //     });
-  //     return apos.modules.products.insert(apos.tasks.getReq(), product).then(function () {
-  //       i++;
-  //       if (i <= total) {
-  //         return insertNext();
-  //       }
-  //       return true;
-  //     });
-  //   }
-  // });
+  it('insert many test products', async function () {
+    const total = 50;
+    const req = apos.task.getReq();
+    let i = 1;
+    const inserted = [];
+
+    await insertNext();
+
+    assert(inserted.length === 50);
+
+    async function insertNext () {
+      const product = Object.assign(apos.modules.product.newInstance(), {
+        title: 'Cheese #' + padInteger(i, 5),
+        slug: 'cheese-' + padInteger(i, 5),
+        richText: {
+          metaType: 'area',
+          items: [
+            {
+              type: '@apostrophecms/rich-text',
+              metaType: 'widget',
+              content: '<h2>This is rich text.</h2>'
+            }
+          ]
+        }
+      });
+
+      const doc = await apos.modules.product.insert(req, product);
+
+      if (doc._id) {
+        // Successful insertion. It now has a uid.
+        inserted.push(doc._id);
+      }
+
+      i++;
+
+      if (i <= total) {
+        return insertNext();
+      }
+
+      return true;
+    }
+  });
 
   // it('export the products', function (done) {
   //   const req = apos.tasks.getReq();
@@ -135,10 +141,10 @@ describe('Pieces Exporter', function () {
   // });
 });
 
-// function padInteger (i, places) {
-//   let s = i + '';
-//   while (s.length < places) {
-//     s = '0' + s;
-//   }
-//   return s;
-// }
+function padInteger (i, places) {
+  let s = i + '';
+  while (s.length < places) {
+    s = '0' + s;
+  }
+  return s;
+}
