@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "npm run eslint",
     "eslint": "eslint .",
-    "test": "npm run lint && mocha"
+    "test": "npm audit --production && npm run lint && mocha"
   },
   "repository": {
     "type": "git",
@@ -27,5 +27,9 @@
     "mocha": "^7.1.2",
     "stylelint": "^13.7.1",
     "stylelint-config-apostrophe": "^1.0.0"
+  },
+  "dependencies": {
+    "csv-stringify": "^5.6.5",
+    "xlsx": "^0.17.3"
   }
 }

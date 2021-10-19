@@ -14,14 +14,15 @@ describe('Pieces Exporter', function () {
 
   it('should improve piece types on the apos object', async function () {
     apos = await testUtil.create({
-      shortname: 'formsTest',
+      shortname: 'test-exporter',
       testModule: true,
       baseUrl: 'http://localhost:4242',
       modules: {
         '@apostrophecms/express': {
           options: {
             port: 4242,
-            // csrf: { exceptions: [ '/api/v1/@apostrophecms/form/submit' ] },
+            trustProxy: true,
+            csrf: false,
             session: { secret: 'test-the-exporter' }
           }
         },
@@ -57,7 +58,7 @@ describe('Pieces Exporter', function () {
     assert(productModule.options.exporterActive === true);
   });
 
-  it('insert many test products', async function () {
+  it('can insert many test products', async function () {
     const total = 50;
     const req = apos.task.getReq();
     let i = 1;
@@ -100,38 +101,47 @@ describe('Pieces Exporter', function () {
     }
   });
 
-  it('export the products', async function () {
+  it('can export the products as a CSV', async function () {
     const req = apos.task.getReq();
     let good = 0;
     let bad = 0;
     let results;
 
-    apos.modules.product.exportRun(req, {
-      success: function () {
+    const reporting = {
+      good: function () {
         good++;
       },
-      failure: function () {
+      bad: function () {
         bad++;
       },
-      getResults: function (_results) {
+      setResults: function (_results) {
         results = _results;
       }
-    }, {
-      published: 'yes',
-      extension: 'csv',
-      format: apos.modules.product.exportFormats.csv,
-      // Test multiple batches with a small number of products.
-      batchSize: 10,
-      // Don't let the timeout for deleting the report afterward prevent this
-      // test from ending.
-      expiration: 5000
-    });
+    };
+
+    try {
+      await apos.modules.product.exportRun(req, reporting, {
+        archived: false,
+        extension: 'csv',
+        format: apos.modules.product.exportFormats.csv,
+        // Test multiple batches with a small number of products.
+        batchSize: 10,
+        // Don't let the timeout for deleting the report afterward prevent this
+        // test from ending.
+        expiration: 15000
+      });
+    } catch (error) {
+      console.error('😖', error);
+      assert(!error);
+    }
 
     assert(results.url);
+    console.info('🥺', results);
+
     assert(good === 50);
     assert(!bad);
 
-    const exported = apos.http.get(results.url);
+    const exported = await apos.http.get(results.url);
     assert(exported.match(/,Cheese #00001,/));
     assert(exported.indexOf(',<h4>This stays rich text.</h4>,') !== -1);
   });
