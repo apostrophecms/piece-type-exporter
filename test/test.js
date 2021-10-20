@@ -58,6 +58,8 @@ describe('Pieces Exporter', function () {
     assert(productModule.options.exporterActive === true);
   });
 
+  const richText = '<h2>This is rich text.</h2>';
+
   it('can insert many test products', async function () {
     const total = 50;
     const req = apos.task.getReq();
@@ -78,7 +80,7 @@ describe('Pieces Exporter', function () {
             {
               type: '@apostrophecms/rich-text',
               metaType: 'widget',
-              content: '<h2>This is rich text.</h2>'
+              content: richText
             }
           ]
         }
@@ -131,19 +133,18 @@ describe('Pieces Exporter', function () {
         expiration: 15000
       });
     } catch (error) {
-      console.error('😖', error);
       assert(!error);
     }
 
     assert(results.url);
-    console.info('🥺', results);
-
     assert(good === 50);
     assert(!bad);
 
-    const exported = await apos.http.get(results.url);
+    // Hard-coded baseUrl with one forward slash due to a quirk in
+    // self.apos.attachment.uploadfs.getUrl()
+    const exported = await apos.http.get(results.url.replace('http:/localhost:4242', ''));
     assert(exported.match(/,Cheese #00001,/));
-    assert(exported.indexOf(',<h4>This stays rich text.</h4>,') !== -1);
+    assert(exported.indexOf(`,${richText}`) !== -1);
   });
 });
 
