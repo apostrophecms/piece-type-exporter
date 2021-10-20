@@ -130,7 +130,7 @@ describe('Pieces Exporter', function () {
         batchSize: 10,
         // Don't let the timeout for deleting the report afterward prevent this
         // test from ending.
-        expiration: 15000
+        expiration: 5000
       });
     } catch (error) {
       assert(!error);
