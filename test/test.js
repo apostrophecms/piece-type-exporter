@@ -26,10 +26,11 @@ describe('Pieces Exporter', function () {
         },
         '@apostrophecms/pieces-exporter': {
           options: {
+            // A meaningless option to confirm the piece types are "improved."
             exporterActive: true
           }
         },
-        product: {
+        article: {
           extend: '@apostrophecms/piece-type',
           options: {
             export: true
@@ -41,6 +42,21 @@ describe('Pieces Exporter', function () {
                 widgets: {
                   '@apostrophecms/rich-text': {}
                 }
+              }
+            }
+          }
+        },
+        product: {
+          extend: '@apostrophecms/piece-type',
+          options: {
+            export: {
+              omitFields: [ 'secret' ]
+            }
+          },
+          fields: {
+            add: {
+              secret: {
+                type: 'string'
               },
               plainText: {
                 type: 'area',
@@ -57,70 +73,117 @@ describe('Pieces Exporter', function () {
       }
     });
 
+    const articleModule = apos.modules.article;
     const productModule = apos.modules.product;
 
+    assert(articleModule.__meta.name === 'article');
+    assert(articleModule.options.export === true);
     assert(productModule.__meta.name === 'product');
-    assert(productModule.options.export === true);
+    assert(typeof productModule.options.export === 'object');
     // Pieces exporter is working and improving piece types.
     assert(productModule.options.exporterActive === true);
   });
 
   const richText = '<h2>This is rich text.</h2>';
-  const plainText = 'This is plain text.';
-  const plainTextWrapped = `<p>${plainText}</p>`;
 
-  it('can insert many test products', async function () {
+  it('can insert many test articles', async function () {
     const total = 50;
     const req = apos.task.getReq();
-    let i = 1;
+    const i = 1;
     const inserted = [];
 
-    await insertNext();
+    const data = {
+      richText: {
+        metaType: 'area',
+        items: [
+          {
+            type: '@apostrophecms/rich-text',
+            metaType: 'widget',
+            content: richText
+          }
+        ]
+      }
+    };
+
+    await insertNext(req, apos.modules.article, 'article', data, i, total, inserted);
 
     assert(inserted.length === 50);
-
-    async function insertNext () {
-      const product = Object.assign(apos.modules.product.newInstance(), {
-        title: 'Cheese #' + padInteger(i, 5),
-        slug: 'cheese-' + padInteger(i, 5),
-        richText: {
-          metaType: 'area',
-          items: [
-            {
-              type: '@apostrophecms/rich-text',
-              metaType: 'widget',
-              content: richText
-            }
-          ]
-        },
-        plainText: {
-          metaType: 'area',
-          items: [
-            {
-              type: '@apostrophecms/rich-text',
-              metaType: 'widget',
-              content: plainTextWrapped
-            }
-          ]
-        }
-      });
-
-      const doc = await apos.modules.product.insert(req, product);
-
-      if (doc._id) {
-        // Successful insertion. It now has a uid.
-        inserted.push(doc._id);
-      }
-
-      i++;
-
-      if (i <= total) {
-        return insertNext();
-      }
-
-      return true;
-    }
   });
+
+  it('can export the articles as a CSV', async function () {
+    const req = apos.task.getReq();
+    let good = 0;
+    let bad = 0;
+    let results;
+
+    const reporting = {
+      good: function () {
+        good++;
+      },
+      bad: function () {
+        bad++;
+      },
+      setResults: function (_results) {
+        results = _results;
+      }
+    };
+
+    try {
+      await apos.modules.article.exportRun(req, reporting, {
+        archived: false,
+        extension: 'csv',
+        format: apos.modules.article.exportFormats.csv,
+        // Test multiple batches with a small number of articles.
+        batchSize: 10,
+        // Don't let the timeout for deleting the report afterward prevent this
+        // test from ending.
+        expiration: 10000
+      });
+    } catch (error) {
+      assert(!error);
+    }
+
+    assert(results.url);
+    assert(good === 50);
+    assert(!bad);
+
+    // Hard-coded baseUrl with one forward slash due to a quirk in
+    // self.apos.attachment.uploadfs.getUrl()
+    const exportedArticles = await apos.http.get(results.url.replace('http:/localhost:4242', ''));
+    assert(exportedArticles.match(/,article #00001,/));
+    assert(exportedArticles.indexOf(`,${richText}`) !== -1);
+  });
+
+  const plainText = 'This is plain text.';
+  const plainTextWrapped = `<p>${plainText}</p>`;
+  const secret = 'hide-me';
+
+  it('can insert many test products', async function () {
+    const total = 30;
+    const req = apos.task.getReq();
+    const i = 1;
+    const inserted = [];
+
+    const data = {
+      plainText: {
+        metaType: 'area',
+        items: [
+          {
+            type: '@apostrophecms/rich-text',
+            metaType: 'widget',
+            content: plainTextWrapped
+          }
+        ]
+      },
+      secret
+    };
+
+    await insertNext(req, apos.modules.product, 'product', data, i, total, inserted);
+
+    assert(inserted.length === 30);
+  });
+
+  let exportedProducts;
 
   it('can export the products as a CSV', async function () {
     const req = apos.task.getReq();
@@ -145,7 +208,7 @@ describe('Pieces Exporter', function () {
         archived: false,
         extension: 'csv',
         format: apos.modules.product.exportFormats.csv,
-        // Test multiple batches with a small number of products.
+        // Test multiple batches with a small number of articles.
         batchSize: 10,
         // Don't let the timeout for deleting the report afterward prevent this
         // test from ending.
@@ -156,16 +219,22 @@ describe('Pieces Exporter', function () {
     }
 
     assert(results.url);
-    assert(good === 50);
+    assert(good === 30);
     assert(!bad);
 
     // Hard-coded baseUrl with one forward slash due to a quirk in
     // self.apos.attachment.uploadfs.getUrl()
-    const exported = await apos.http.get(results.url.replace('http:/localhost:4242', ''));
-    assert(exported.match(/,Cheese #00001,/));
-    assert(exported.indexOf(`,${richText}`) !== -1);
-    assert(exported.indexOf(`,${plainTextWrapped}`) === -1);
-    assert(exported.indexOf(`,${plainText}`) !== -1);
+    exportedProducts = await apos.http.get(results.url.replace('http:/localhost:4242', ''));
+    assert(exportedProducts.match(/,product #00001,/));
+  });
+
+  it('can convert product rich text to plain text', async function () {
+    assert(exportedProducts.indexOf(`,${plainTextWrapped}`) === -1);
+    assert(exportedProducts.indexOf(`,${plainText}`) !== -1);
+  });
+
+  it('can omit the secret product field', async function () {
+    assert(exportedProducts.indexOf(`,${secret}`) === -1);
   });
 });
 
@@ -176,3 +245,26 @@ function padInteger (i, places) {
   }
   return s;
 }
+
+async function insertNext (req, pieceModule, title, data, i, total, collection) {
+  const docData = Object.assign(pieceModule.newInstance(), {
+    title: `${title} #${padInteger(i, 5)}`,
+    slug: `${title}-${padInteger(i, 5)}`,
+    ...data
+  });
+
+  const doc = await pieceModule.insert(req, docData);
+
+  if (doc._id) {
+    // Successful insertion. It now has a uid.
+    collection.push(doc._id);
+  }
+
+  i++;
+
+  if (i <= total) {
+    return insertNext(req, pieceModule, title, data, i, total, collection);
+  }
+
+  return true;
+};
