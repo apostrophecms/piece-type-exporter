@@ -1,7 +1,5 @@
 const assert = require('assert');
 const testUtil = require('apostrophe/test-lib/test');
-// const _ = require('lodash');
-// const request = require('request');
 
 describe('Pieces Exporter', function () {
   let apos;
