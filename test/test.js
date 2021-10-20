@@ -41,6 +41,15 @@ describe('Pieces Exporter', function () {
                 widgets: {
                   '@apostrophecms/rich-text': {}
                 }
+              },
+              plainText: {
+                type: 'area',
+                widgets: {
+                  '@apostrophecms/rich-text': {}
+                },
+                options: {
+                  exportPlainText: true
+                }
               }
             }
           }
@@ -57,6 +66,8 @@ describe('Pieces Exporter', function () {
   });
 
   const richText = '<h2>This is rich text.</h2>';
+  const plainText = 'This is plain text.';
+  const plainTextWrapped = `<p>${plainText}</p>`;
 
   it('can insert many test products', async function () {
     const total = 50;
@@ -79,6 +90,16 @@ describe('Pieces Exporter', function () {
               type: '@apostrophecms/rich-text',
               metaType: 'widget',
               content: richText
+            }
+          ]
+        },
+        plainText: {
+          metaType: 'area',
+          items: [
+            {
+              type: '@apostrophecms/rich-text',
+              metaType: 'widget',
+              content: plainTextWrapped
             }
           ]
         }
@@ -128,7 +149,7 @@ describe('Pieces Exporter', function () {
         batchSize: 10,
         // Don't let the timeout for deleting the report afterward prevent this
         // test from ending.
-        expiration: 5000
+        expiration: 10000
       });
     } catch (error) {
       assert(!error);
@@ -143,6 +164,8 @@ describe('Pieces Exporter', function () {
     const exported = await apos.http.get(results.url.replace('http:/localhost:4242', ''));
     assert(exported.match(/,Cheese #00001,/));
     assert(exported.indexOf(`,${richText}`) !== -1);
+    assert(exported.indexOf(`,${plainTextWrapped}`) === -1);
+    assert(exported.indexOf(`,${plainText}`) !== -1);
   });
 });
 
