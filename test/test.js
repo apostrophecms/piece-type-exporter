@@ -20,7 +20,16 @@ describe('Pieces Exporter', function () {
           options: {
             port: 4242,
             trustProxy: true,
-            csrf: false,
+            apiKeys: {
+              testKey: {
+                role: 'admin'
+              }
+            },
+            csrf: {
+              exceptions: [
+                '/api/v1/@apostrophecms/article/export'
+              ]
+            },
             session: { secret: 'test-the-exporter' }
           }
         },
@@ -137,7 +146,7 @@ describe('Pieces Exporter', function () {
         batchSize: 10,
         // Don't let the timeout for deleting the report afterward prevent this
         // test from ending.
-        expiration: 10000
+        expiration: 5000
       });
     } catch (error) {
       assert(!error);
@@ -212,7 +221,7 @@ describe('Pieces Exporter', function () {
         batchSize: 10,
         // Don't let the timeout for deleting the report afterward prevent this
         // test from ending.
-        expiration: 10000
+        expiration: 5000
       });
     } catch (error) {
       assert(!error);
@@ -235,6 +244,53 @@ describe('Pieces Exporter', function () {
 
   it('can omit the secret product field', async function () {
     assert(exportedProducts.indexOf(`,${secret}`) === -1);
+  });
+
+  // API Route test
+  let jobInfo;
+
+  it('can get a job ID from the export route', async function () {
+    jobInfo = await apos.http.post('/api/v1/article/export?apikey=testKey', {
+      body: {
+        archived: false,
+        extension: 'csv',
+        batchSize: 10,
+        expiration: 5000
+      }
+    });
+
+    assert(jobInfo.jobId);
+  });
+
+  it('can eventually get the exported CSV url back from the job', async function () {
+    const complete = await checkJob(jobInfo.jobId);
+
+    assert(complete && complete.results.url);
+
+    async function checkJob (id) {
+      let job;
+
+      try {
+        job = await apos.http.post('/api/v1/@apostrophecms/job/progress?apikey=testKey', {
+          body: {
+            _id: id
+          }
+        });
+      } catch (error) {
+        assert(!error);
+        return null;
+      }
+
+      if (!job.ended) {
+        await new Promise(resolve => {
+          setTimeout(resolve, 2000);
+        });
+
+        return checkJob(id);
+      }
+
+      return job;
+    }
   });
 });
 

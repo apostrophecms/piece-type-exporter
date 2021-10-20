@@ -32,5 +32,37 @@ module.exports = {
     return {
       ...require('./lib/export')(self)
     };
+  },
+  apiRoutes (self) {
+    return {
+      post: {
+        export (req) {
+          const archived = self.apos.launder.string(req.body.archived);
+          const extension = self.apos.launder.string(req.body.extension);
+          const batchSize = self.apos.launder.string(req.body.batchSize);
+          const expiration = self.apos.launder.string(req.body.expiration);
+
+          if (!self.exportFormats[extension]) {
+            throw self.apos.error('invalid');
+          }
+
+          const format = self.exportFormats[extension];
+
+          return self.apos.modules['@apostrophecms/job'].runNonBatch(
+            req,
+            function (req, reporting) {
+              return self.exportRun(req, reporting, {
+                archived,
+                extension,
+                format,
+                batchSize,
+                expiration
+              });
+            },
+            {}
+          );
+        }
+      }
+    };
   }
 };
