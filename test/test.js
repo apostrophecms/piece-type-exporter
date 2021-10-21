@@ -139,7 +139,6 @@ describe('Pieces Exporter', function () {
 
     try {
       await apos.modules.article.exportRun(req, reporting, {
-        archived: false,
         extension: 'csv',
         format: apos.modules.article.exportFormats.csv,
         // Test multiple batches with a small number of articles.
@@ -214,7 +213,6 @@ describe('Pieces Exporter', function () {
 
     try {
       await apos.modules.product.exportRun(req, reporting, {
-        archived: false,
         extension: 'csv',
         format: apos.modules.product.exportFormats.csv,
         // Test multiple batches with a small number of articles.
