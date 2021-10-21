@@ -71,6 +71,27 @@ module.exports = {
 }
 ```
 
+#### `expiration`
+
+By default, exported files are automatically deleted after one hour. You can change this time span by setting an `expiration` property on the `export` option. It should be set to an integer representing the number of milliseconds until expiration.
+
+```javascript
+// modules/article/index.js
+module.exports = {
+  extend: '@apostrophecms/piece-type',
+  options: {
+    label: 'Article',
+    pluralLabel: 'Articles',
+    export: {
+      // 👇 Set to expire after two hours. Tip: Writing as an expression can
+      // help make it clearer to other people.
+      expiration: 1000 * 60 * 120
+    }
+  },
+  // Other properties...
+}
+```
+
 #### Export areas as plain text with `exportPlainText`
 
 By default, this module exports areas as rich text. You will receive simple HTML markup corresponding to any rich text widgets present in those areas.

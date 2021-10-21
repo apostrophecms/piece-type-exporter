@@ -39,7 +39,7 @@ module.exports = {
         export (req) {
           const extension = self.apos.launder.string(req.body.extension);
           const batchSize = self.apos.launder.integer(req.body.batchSize);
-          const expiration = self.apos.launder.string(req.body.expiration);
+          const expiration = typeof self.options.export === 'object' ? self.apos.launder.integer(self.options.export.expiration) : null;
 
           if (!self.exportFormats[extension]) {
             throw self.apos.error('invalid');

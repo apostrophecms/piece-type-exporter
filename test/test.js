@@ -42,7 +42,9 @@ describe('Pieces Exporter', function () {
         article: {
           extend: '@apostrophecms/piece-type',
           options: {
-            export: true
+            export: {
+              expiration: 5000
+            }
           },
           fields: {
             add: {
@@ -59,7 +61,8 @@ describe('Pieces Exporter', function () {
           extend: '@apostrophecms/piece-type',
           options: {
             export: {
-              omitFields: [ 'secret' ]
+              omitFields: [ 'secret' ],
+              expiration: 5000
             }
           },
           fields: {
@@ -86,7 +89,7 @@ describe('Pieces Exporter', function () {
     const productModule = apos.modules.product;
 
     assert(articleModule.__meta.name === 'article');
-    assert(articleModule.options.export === true);
+    assert(typeof articleModule.options.export === 'object');
     assert(productModule.__meta.name === 'product');
     assert(typeof productModule.options.export === 'object');
     // Pieces exporter is working and improving piece types.
@@ -251,8 +254,7 @@ describe('Pieces Exporter', function () {
     jobInfo = await apos.http.post('/api/v1/article/export?apikey=testKey', {
       body: {
         extension: 'csv',
-        batchSize: 10,
-        expiration: 5000
+        batchSize: 10
       }
     });
 
