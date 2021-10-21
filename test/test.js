@@ -250,7 +250,6 @@ describe('Pieces Exporter', function () {
   it('can get a job ID from the export route', async function () {
     jobInfo = await apos.http.post('/api/v1/article/export?apikey=testKey', {
       body: {
-        archived: false,
         extension: 'csv',
         batchSize: 10,
         expiration: 5000
