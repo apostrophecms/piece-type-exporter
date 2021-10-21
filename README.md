@@ -23,7 +23,7 @@ require('apostrophe')({
   modules: {
     // The pieces exporter module
     '@apostrophecms/pieces-exporter': {},
-    // A piece type that will be exported
+    // A piece type that you want to make exportable
     'article': {
       options: {
         export: true
