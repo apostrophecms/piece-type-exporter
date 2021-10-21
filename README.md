@@ -21,7 +21,7 @@ Configure `@apostrophecms/piece-type-exporter` and the form widgets in `app.js`.
 require('apostrophe')({
   shortName: 'my-project',
   modules: {
-    // The pieces exporter module
+    // The exporter module
     '@apostrophecms/piece-type-exporter': {},
     // A piece type that you want to make exportable
     'article': {

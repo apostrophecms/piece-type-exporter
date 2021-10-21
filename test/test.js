@@ -99,10 +99,7 @@ describe('Pieces Exporter', function () {
   const richText = '<h2>This is rich text.</h2>';
 
   it('can insert many test articles', async function () {
-    const total = 50;
     const req = apos.task.getReq();
-    const i = 1;
-    const inserted = [];
 
     const data = {
       richText: {
@@ -117,9 +114,16 @@ describe('Pieces Exporter', function () {
       }
     };
 
-    await insertNext(req, apos.modules.article, 'article', data, i, total, inserted);
+    const promises = [];
+
+    for (let i = 1; i <= 50; i++) {
+      promises.push(insert(req, apos.modules.article, 'article', data, i));
+    }
+
+    const inserted = await Promise.all(promises);
 
     assert(inserted.length === 50);
+    assert(!!inserted[0]._id);
   });
 
   it('can export the articles as a CSV', async function () {
@@ -170,10 +174,7 @@ describe('Pieces Exporter', function () {
   const secret = 'hide-me';
 
   it('can insert many test products', async function () {
-    const total = 30;
     const req = apos.task.getReq();
-    const i = 1;
-    const inserted = [];
 
     const data = {
       plainText: {
@@ -189,9 +190,16 @@ describe('Pieces Exporter', function () {
       secret
     };
 
-    await insertNext(req, apos.modules.product, 'product', data, i, total, inserted);
+    const promises = [];
+
+    for (let i = 1; i <= 30; i++) {
+      promises.push(insert(req, apos.modules.product, 'product', data, i));
+    }
+
+    const inserted = await Promise.all(promises);
 
     assert(inserted.length === 30);
+    assert(!!inserted[0]._id);
   });
 
   let exportedProducts;
@@ -301,25 +309,12 @@ function padInteger (i, places) {
   return s;
 }
 
-async function insertNext (req, pieceModule, title, data, i, total, collection) {
+async function insert (req, pieceModule, title, data, i) {
   const docData = Object.assign(pieceModule.newInstance(), {
     title: `${title} #${padInteger(i, 5)}`,
     slug: `${title}-${padInteger(i, 5)}`,
     ...data
   });
 
-  const doc = await pieceModule.insert(req, docData);
-
-  if (doc._id) {
-    // Successful insertion. It now has a uid.
-    collection.push(doc._id);
-  }
-
-  i++;
-
-  if (i <= total) {
-    return insertNext(req, pieceModule, title, data, i, total, collection);
-  }
-
-  return true;
+  return pieceModule.insert(req, docData);
 };
