@@ -38,7 +38,7 @@ module.exports = {
       post: {
         export (req) {
           const extension = self.apos.launder.string(req.body.extension);
-          const batchSize = self.apos.launder.string(req.body.batchSize);
+          const batchSize = self.apos.launder.integer(req.body.batchSize);
           const expiration = self.apos.launder.string(req.body.expiration);
 
           if (!self.exportFormats[extension]) {
