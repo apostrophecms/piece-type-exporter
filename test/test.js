@@ -33,7 +33,7 @@ describe('Pieces Exporter', function () {
             session: { secret: 'test-the-exporter' }
           }
         },
-        '@apostrophecms/pieces-exporter': {
+        '@apostrophecms/piece-type-exporter': {
           options: {
             // A meaningless option to confirm the piece types are "improved."
             exporterActive: true

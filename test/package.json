@@ -4,6 +4,6 @@
   "//-": "exist in package.json at project level, which for a test is here",
   "dependencies": {
     "apostrophe": "^3.4.0",
-    "@apostrophecms/pieces-exporter": "git://github.com/apostrophecms/pieces-exporter.git"
+    "@apostrophecms/piece-type-exporter": "git://github.com/apostrophecms/piece-type-exporter.git"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@apostrophecms/pieces-exporter",
+  "name": "@apostrophecms/piece-type-exporter",
   "version": "1.0.0-beta",
   "description": "An Apostrophe 3 module to support exporting piece data",
   "main": "index.js",
@@ -10,9 +10,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/apostrophecms/pieces-exporter.git"
+    "url": "git+https://github.com/apostrophecms/piece-type-exporter.git"
   },
-  "homepage": "https://github.com/apostrophecms/pieces-exporter#readme",
+  "homepage": "https://github.com/apostrophecms/piece-type-exporter#readme",
   "author": "Apostrophe Technologies",
   "license": "MIT",
   "devDependencies": {

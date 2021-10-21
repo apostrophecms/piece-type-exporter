@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/apostrophecms/pieces-exporter/tree/main.svg?style=svg)](https://circleci.com/gh/apostrophecms/pieces-exporter/tree/main)
+[![CircleCI](https://circleci.com/gh/apostrophecms/piece-type-exporter/tree/main.svg?style=svg)](https://circleci.com/gh/apostrophecms/piece-type-exporter/tree/main)
 [![Chat on Discord](https://img.shields.io/discord/517772094482677790.svg)](https://chat.apostrophecms.org)
 
 # Apostrophe Pieces Exporter
@@ -8,21 +8,21 @@ This module adds an optional export feature to all piece type modules in an [Apo
 ## Installation
 
 ```bash
-npm install @apostrophecms/pieces-exporter
+npm install @apostrophecms/piece-type-exporter
 ```
 
 ## Use
 
 ### Initialization
 
-Configure `@apostrophecms/pieces-exporter` and the form widgets in `app.js`.
+Configure `@apostrophecms/piece-type-exporter` and the form widgets in `app.js`.
 
 ```javascript
 require('apostrophe')({
   shortName: 'my-project',
   modules: {
     // The pieces exporter module
-    '@apostrophecms/pieces-exporter': {},
+    '@apostrophecms/piece-type-exporter': {},
     // A piece type that you want to make exportable
     'article': {
       options: {
