@@ -97,6 +97,7 @@ describe('Pieces Exporter', function () {
   });
 
   const richText = '<h2>This is rich text.</h2>';
+  let _ids1 = [];
 
   it('can insert many test articles', async function () {
     const req = apos.task.getReq();
@@ -121,6 +122,7 @@ describe('Pieces Exporter', function () {
     }
 
     const inserted = await Promise.all(promises);
+    _ids1 = inserted.map(doc => doc._id);
 
     assert(inserted.length === 50);
     assert(!!inserted[0]._id);
@@ -128,6 +130,9 @@ describe('Pieces Exporter', function () {
 
   it('can export the articles as a CSV', async function () {
     const req = apos.task.getReq();
+    req.body = req.body || {};
+    req.body._ids = _ids1;
+
     let good = 0;
     let bad = 0;
     let results;
@@ -172,7 +177,7 @@ describe('Pieces Exporter', function () {
   const plainText = 'This is plain text.';
   const plainTextWrapped = `<p>${plainText}</p>`;
   const secret = 'hide-me';
-
+  let _ids2 = [];
   it('can insert many test products', async function () {
     const req = apos.task.getReq();
 
@@ -197,6 +202,7 @@ describe('Pieces Exporter', function () {
     }
 
     const inserted = await Promise.all(promises);
+    _ids2 = inserted.map(doc => doc._id);
 
     assert(inserted.length === 30);
     assert(!!inserted[0]._id);
@@ -206,6 +212,9 @@ describe('Pieces Exporter', function () {
 
   it('can export the products as a CSV', async function () {
     const req = apos.task.getReq();
+    req.body = req.body || {};
+    req.body._ids = _ids2;
+
     let good = 0;
     let bad = 0;
     let results;
@@ -262,7 +271,8 @@ describe('Pieces Exporter', function () {
     jobInfo = await apos.http.post('/api/v1/article/export?apikey=testKey', {
       body: {
         extension: 'csv',
-        batchSize: 10
+        batchSize: 10,
+        _ids: _ids1
       }
     });
 
@@ -278,11 +288,7 @@ describe('Pieces Exporter', function () {
       let job;
 
       try {
-        job = await apos.http.post('/api/v1/@apostrophecms/job/progress?apikey=testKey', {
-          body: {
-            _id: id
-          }
-        });
+        job = await apos.http.get(`/api/v1/@apostrophecms/job/${id}?apikey=testKey`, {});
       } catch (error) {
         assert(!error);
         return null;
