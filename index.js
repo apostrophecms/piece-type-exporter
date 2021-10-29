@@ -37,6 +37,9 @@ module.exports = {
     return {
       post: {
         export (req) {
+          if (!Array.isArray(req.body._ids)) {
+            throw self.apos.error('invalid');
+          }
           const extension = self.apos.launder.string(req.body.extension);
           const batchSize = self.apos.launder.integer(req.body.batchSize);
           const expiration = typeof self.options.export === 'object' ? self.apos.launder.integer(self.options.export.expiration) : null;
@@ -44,6 +47,10 @@ module.exports = {
           if (!self.exportFormats[extension]) {
             throw self.apos.error('invalid');
           }
+
+          // Add the piece type label to req.body for notifications.
+          req.body.type = req.body._ids.length === 1 ? self.options.label : self.options.pluralLabel;
+          // TODO: work out how to make these sentence cased properly
 
           const format = self.exportFormats[extension];
 
