@@ -50,7 +50,6 @@ module.exports = {
 
           // Add the piece type label to req.body for notifications.
           req.body.type = req.body._ids.length === 1 ? self.options.label : self.options.pluralLabel;
-          // TODO: work out how to make these sentence cased properly
 
           const format = self.exportFormats[extension];
 
