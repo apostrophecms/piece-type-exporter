@@ -3,6 +3,29 @@ const fs = require('fs');
 
 module.exports = {
   improve: '@apostrophecms/piece-type',
+  batchOperations (self) {
+    return {
+      add: {
+        export: {
+          label: 'Export',
+          route: '/export',
+          messages: {
+            progress: 'Exported {{ count }} {{ type }}.',
+            completed: 'Exporting {{ type }}...'
+          },
+          requestOptions: {
+            extension: 'csv'
+          }
+        }
+      },
+      group: {
+        more: {
+          icon: 'dots-vertical-icon',
+          operations: [ 'export' ]
+        }
+      }
+    };
+  },
   init (self) {
     self.exportFormats = {
       csv: {
