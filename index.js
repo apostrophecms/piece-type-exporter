@@ -15,6 +15,11 @@ module.exports = {
           },
           requestOptions: {
             extension: 'csv'
+          },
+          modalOptions: {
+            title: 'Export {{ type }}',
+            description: 'Are you sure you want to export {{ count }} {{ type }}',
+            confirmationButton: 'Yes, export content'
           }
         }
       },
