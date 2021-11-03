@@ -3,7 +3,7 @@
 
 # Apostrophe Pieces Exporter
 
-This module adds an optional export feature to all piece type modules in an [Apostrophe](https://apostrophecms.com) project. Requires Apostrophe 3.
+This module adds an optional export feature to all piece type modules in an [Apostrophe](https://apostrophecms.com) project. This feature enables exporting *published* pieces of piece types where it is configured. Requires Apostrophe 3.
 
 ## Installation
 
