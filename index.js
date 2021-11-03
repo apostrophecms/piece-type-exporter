@@ -10,7 +10,7 @@ module.exports = {
           label: 'Export',
           route: '/export',
           messages: {
-            progress: 'Exported {{ count }} {{ type }}.',
+            progress: 'Exporting complete.',
             completed: 'Exporting {{ type }}...'
           },
           requestOptions: {
