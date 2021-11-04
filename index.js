@@ -67,6 +67,9 @@ module.exports = {
           if (!Array.isArray(req.body._ids)) {
             throw self.apos.error('invalid');
           }
+          // Reassigning this since it is referenced off of req elsewhere.
+          req.body._ids = self.apos.launder.ids(req.body._ids);
+
           const extension = self.apos.launder.string(req.body.extension);
           const batchSize = self.apos.launder.integer(req.body.batchSize);
           const expiration = typeof self.options.export === 'object' ? self.apos.launder.integer(self.options.export.expiration) : null;
