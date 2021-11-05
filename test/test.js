@@ -79,6 +79,13 @@ describe('Pieces Exporter', function () {
                 }
               }
             }
+          },
+          methods (self) {
+            return {
+              beforeExport(req, piece, record) {
+                record.title = 'fresh-' + record.title;
+              }
+            };
           }
         }
       }
@@ -247,7 +254,7 @@ describe('Pieces Exporter', function () {
     assert(!bad);
 
     exportedProducts = await apos.http.get(results.url);
-    assert(exportedProducts.match(/,product #00001,/));
+    assert(exportedProducts.match(/,fresh-product #00001,/));
   });
 
   it('can convert product rich text to plain text', async function () {
