@@ -83,7 +83,7 @@ module.exports = {
 
           const format = self.exportFormats[extension];
 
-          return self.apos.modules['@apostrophecms/job'].runNonBatch(
+          return self.apos.modules['@apostrophecms/job'].run(
             req,
             function (req, reporting) {
               return self.exportRun(req, reporting, {

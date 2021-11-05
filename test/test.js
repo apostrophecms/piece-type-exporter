@@ -137,10 +137,10 @@ describe('Pieces Exporter', function () {
     let results;
 
     const reporting = {
-      good: function () {
+      success: function () {
         good++;
       },
-      bad: function () {
+      failure: function () {
         bad++;
       },
       setResults: function (_results) {
@@ -217,10 +217,10 @@ describe('Pieces Exporter', function () {
     let results;
 
     const reporting = {
-      good: function () {
+      success: function () {
         good++;
       },
-      bad: function () {
+      failure: function () {
         bad++;
       },
       setResults: function (_results) {
