@@ -123,3 +123,40 @@ module.exports = {
   }
 }
 ```
+
+### Directly work with the export record in `beforeExport`
+
+The exporter relies on a simple conversion from each standard field type to a string. It also only includes properties that related to registered schema fields. You can change this by implementing a `beforeExport` method in your piece type module.
+
+`beforeExport` methods are provided the following arguments:
+- `req`: The original request
+- `piece`: The piece data to export
+- `record` An object of piece data converted to strings for export
+
+By default this method simply returns the converted record with each schema  property converted to a string. You may change any properties or add new properties to `record` based on what you see in `piece`. **`beforeExport` must return the `record` object with the same properties for every piece.**
+
+```javascript
+// modules/article/index.js
+module.exports = {
+  // Other properties...
+  methods(self) {
+    return {
+      async beforeExport (req, piece, record) {
+        let views;
+
+        if (piece.visibility === 'public') {
+          // Finding the view count with a hypothetical method.
+          views = await self.getArticleViews(piece._id);
+        }
+
+        return {
+          ...record,
+          views: views || ''
+        };
+      }
+    }
+  }
+}
+```
+
+`beforeExport` may be an asynchronous function.
