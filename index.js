@@ -10,11 +10,15 @@ module.exports = {
           label: 'Export',
           route: '/export',
           messages: {
-            progress: 'Exporting complete.',
-            completed: 'Exporting {{ type }}...'
+            progress: 'Exporting {{ type }}...'
           },
           requestOptions: {
             extension: 'csv'
+          },
+          modalOptions: {
+            title: 'Export {{ type }}',
+            description: 'Are you sure you want to export {{ count }} {{ type }}',
+            confirmationButton: 'Yes, export content'
           }
         }
       },

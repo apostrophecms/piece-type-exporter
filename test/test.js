@@ -14,7 +14,6 @@ describe('Pieces Exporter', function () {
     apos = await testUtil.create({
       shortname: 'test-exporter',
       testModule: true,
-      baseUrl: 'http://localhost:4242',
       modules: {
         '@apostrophecms/express': {
           options: {
@@ -167,9 +166,7 @@ describe('Pieces Exporter', function () {
     assert(good === 50);
     assert(!bad);
 
-    // Hard-coded baseUrl with one forward slash due to a quirk in
-    // self.apos.attachment.uploadfs.getUrl()
-    const exportedArticles = await apos.http.get(results.url.replace('http:/localhost:4242', ''));
+    const exportedArticles = await apos.http.get(results.url);
     assert(exportedArticles.match(/,article #00001,/));
     assert(exportedArticles.indexOf(`,${richText}`) !== -1);
   });
@@ -249,9 +246,7 @@ describe('Pieces Exporter', function () {
     assert(good === 30);
     assert(!bad);
 
-    // Hard-coded baseUrl with one forward slash due to a quirk in
-    // self.apos.attachment.uploadfs.getUrl()
-    exportedProducts = await apos.http.get(results.url.replace('http:/localhost:4242', ''));
+    exportedProducts = await apos.http.get(results.url);
     assert(exportedProducts.match(/,product #00001,/));
   });
 
