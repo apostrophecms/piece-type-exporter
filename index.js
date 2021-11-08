@@ -71,8 +71,10 @@ module.exports = {
           req.body._ids = self.apos.launder.ids(req.body._ids);
 
           const extension = self.apos.launder.string(req.body.extension);
-          const batchSize = self.apos.launder.integer(req.body.batchSize);
-          const expiration = typeof self.options.export === 'object' ? self.apos.launder.integer(self.options.export.expiration) : null;
+          const batchSize = typeof self.options.export === 'object' &&
+            self.apos.launder.integer(self.options.export.batchSize);
+          const expiration = typeof self.options.export === 'object' &&
+            self.apos.launder.integer(self.options.export.expiration);
 
           if (!self.exportFormats[extension]) {
             throw self.apos.error('invalid');
@@ -83,7 +85,7 @@ module.exports = {
 
           const format = self.exportFormats[extension];
 
-          return self.apos.modules['@apostrophecms/job'].runNonBatch(
+          return self.apos.modules['@apostrophecms/job'].run(
             req,
             function (req, reporting) {
               return self.exportRun(req, reporting, {
