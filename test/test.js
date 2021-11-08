@@ -42,6 +42,7 @@ describe('Pieces Exporter', function () {
           extend: '@apostrophecms/piece-type',
           options: {
             export: {
+              batchSize: 10,
               expiration: 5000
             }
           },
@@ -61,6 +62,7 @@ describe('Pieces Exporter', function () {
           options: {
             export: {
               omitFields: [ 'secret' ],
+              batchSize: 10,
               expiration: 5000
             }
           },
@@ -151,12 +153,7 @@ describe('Pieces Exporter', function () {
     try {
       await apos.modules.article.exportRun(req, reporting, {
         extension: 'csv',
-        format: apos.modules.article.exportFormats.csv,
-        // Test multiple batches with a small number of articles.
-        batchSize: 10,
-        // Don't let the timeout for deleting the report afterward prevent this
-        // test from ending.
-        expiration: 5000
+        format: apos.modules.article.exportFormats.csv
       });
     } catch (error) {
       assert(!error);
@@ -231,12 +228,7 @@ describe('Pieces Exporter', function () {
     try {
       await apos.modules.product.exportRun(req, reporting, {
         extension: 'csv',
-        format: apos.modules.product.exportFormats.csv,
-        // Test multiple batches with a small number of articles.
-        batchSize: 10,
-        // Don't let the timeout for deleting the report afterward prevent this
-        // test from ending.
-        expiration: 5000
+        format: apos.modules.product.exportFormats.csv
       });
     } catch (error) {
       assert(!error);
@@ -266,7 +258,6 @@ describe('Pieces Exporter', function () {
     jobInfo = await apos.http.post('/api/v1/article/export?apikey=testKey', {
       body: {
         extension: 'csv',
-        batchSize: 10,
         _ids: _ids1
       }
     });
