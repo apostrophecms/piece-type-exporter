@@ -84,6 +84,8 @@ describe('Pieces Exporter', function () {
             return {
               beforeExport(req, piece, record) {
                 record.title = 'fresh-' + record.title;
+
+                return record;
               }
             };
           }
