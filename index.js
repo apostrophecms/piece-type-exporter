@@ -4,6 +4,10 @@ const fs = require('fs');
 module.exports = {
   improve: '@apostrophecms/piece-type',
   batchOperations (self) {
+    if (!self.options.export) {
+      return {};
+    }
+
     return {
       add: {
         export: {
@@ -31,6 +35,10 @@ module.exports = {
     };
   },
   init (self) {
+    if (!self.options.export) {
+      return;
+    }
+
     self.exportFormats = {
       csv: {
         label: 'CSV (comma-separated values)',
@@ -56,11 +64,19 @@ module.exports = {
     };
   },
   methods (self) {
+    if (!self.options.export) {
+      return {};
+    }
+
     return {
       ...require('./lib/export')(self)
     };
   },
   apiRoutes (self) {
+    if (!self.options.export) {
+      return {};
+    }
+
     return {
       post: {
         export (req) {
