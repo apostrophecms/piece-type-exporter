@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.0-beta.1 - 2021-12-08
 
 * Renames methods to decrease potential for conflicts with other modules.
 
