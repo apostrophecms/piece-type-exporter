@@ -11,7 +11,7 @@ module.exports = {
     return {
       add: {
         export: {
-          label: 'Export',
+          label: 'Export as CSV',
           route: '/export',
           messages: {
             progress: 'Exporting {{ type }}...'
