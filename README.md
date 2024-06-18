@@ -3,8 +3,7 @@
 
 # Apostrophe Pieces Exporter
 
-> ⚠️ **NOTE:** This module is a deprecated version of the Import-Export module.  
-Please use [@apostrophecms/import-export](https://github.com/apostrophecms/import-export) instead.
+> ⚠️ **NOTE:** This module is deprecated, its functionality has been incorporated into [@apostrophecms/import-export](https://github.com/apostrophecms/import-export).
 
 This module adds an optional export feature to all piece type modules in an [Apostrophe](https://apostrophecms.com) project. This feature enables exporting *published* pieces of piece types where it is configured. Requires Apostrophe 3.
 
